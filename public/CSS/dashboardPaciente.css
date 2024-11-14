@@ -1,0 +1,79 @@
+/* Establecer box-sizing en todo el documento */
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f4f8;
+  }
+  
+  /* Contenedor principal del dashboard */
+  .container {
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Título principal */
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* Grupo de botones */
+  .button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* Estilo de los botones */
+  .button-group button {
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+  }
+  
+  /* Cambio de color al pasar el ratón */
+  .button-group button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Contenedor para el botón de Cerrar sesión */
+  .logout-container {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  /* Estilo del botón de Cerrar sesión */
+  .logout-container button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 12px 20px;
+    font-size: 16px;
+    width: 100%;
+  }
+  
+  /* Cambio de color al pasar el ratón en el botón de cerrar sesión */
+  .logout-container button:hover {
+    background-color: #e60000;
+  }
+  

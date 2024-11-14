@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Paciente</title>
+  <link rel="stylesheet" href="../CSS/dashboardPaciente.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Bienvenido, <span id="nombrePaciente"></span></h1>
+    <div class="button-group">
+      <button onclick="verExpediente()">Ver Expediente</button>
+      <button onclick="agendarCita()">Agendar Cita</button>
+      <button onclick="verCitas()">Ver Mis Citas</button>
+    </div>
+    <div class="logout-container">
+      <button onclick="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+  </div>
+  <script src="../JS/dashboardPaciente.js"></script>
+</body>
+</html>
