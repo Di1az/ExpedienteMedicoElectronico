@@ -1,29 +1,41 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../database');
-
-// Importar los modelos relacionados
-const Medico = require('./Medico');
+const sequelize = require('../config/database');
+const Doctor = require('./Medico');
 const Paciente = require('./Paciente');
 
 const Cita = sequelize.define('Cita', {
+  id_cita: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
   fecha: {
     type: DataTypes.DATE,
     allowNull: false,
   },
-  diagnostico: {
-    type: DataTypes.STRING,
+  motivo: {
+    type: DataTypes.STRING(255),
     allowNull: true,
   },
-  listaEnfermedades: {
-    type: DataTypes.STRING,
-    allowNull: true,
+  id_doctor: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Doctor,
+      key: 'id_doctor',
+    },
+  },
+  id_paciente: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Paciente,
+      key: 'id_paciente',
+    },
   },
 }, {
-  timestamps: false
+  tableName: 'Citas',
+  timestamps: false,
 });
-
-// Definir relaciones
-Cita.belongsTo(Medico, { foreignKey: 'medicoId' });
-Cita.belongsTo(Paciente, { foreignKey: 'pacienteId' });
 
 module.exports = Cita;

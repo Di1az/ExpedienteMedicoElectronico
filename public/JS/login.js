@@ -1,41 +1,42 @@
-document.getElementById('loginForm').addEventListener('submit', async (event) => {
-  event.preventDefault();
+document.addEventListener('DOMContentLoaded', () => {
+  const formLogin = document.getElementById('loginForm'); // Asegúrate de que el id coincida
 
-  const usuario = document.getElementById('usuario').value;
-  const contraseña = document.getElementById('password').value;
-  const errorMensaje = document.getElementById('errorMensaje');
-  
-  errorMensaje.textContent = '';
+  if (formLogin) {
+    formLogin.addEventListener('submit', async (event) => {
+      event.preventDefault();
 
-  try {
-    const response = await fetch('http://localhost:3001/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ usuario, contraseña }),
+      const nombre_usuario = document.getElementById('nombreUsuario').value;
+      const contraseña = document.getElementById('contraseña').value;
+
+      try {
+        const response = await fetch('http://localhost:3001/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ nombre_usuario, contraseña }),
+        });
+
+        if (response.ok) {
+          const { token, rol } = await response.json();
+          localStorage.setItem('token', token); // Guardar el token en el almacenamiento local
+
+          // Redirigir según el rol del usuario
+          if (rol === 'doctor') {
+            window.location.href = 'dashboardMedico.html';
+          } else if (rol === 'paciente') {
+            window.location.href = 'dashboardPaciente.html';
+          }
+        } else {
+          const errorData = await response.json();
+          alert(errorData.mensaje || 'Error al iniciar sesión');
+        }
+      } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        alert('Error al conectar con el servidor');
+      }
     });
-
-    if (!response.ok) {
-      throw new Error('Credenciales incorrectas');
-    }
-
-    const data = await response.json();
-
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('rol', data.rol);
-
-    if (data.rol === 'medico') {
-      window.location.href = 'dashboardMedico.html';
-    } else if (data.rol === 'paciente') {
-      window.location.href = 'dashboardPaciente.html';
-    } else {
-      console.error('Rol desconocido:', data.rol);
-      throw new Error('Rol desconocido');
-    }
-
-  } catch (error) {
-    errorMensaje.textContent = error.message;
-    console.error('Error de autenticación:', error);
+  } else {
+    console.error("Formulario de inicio de sesión no encontrado.");
   }
 });

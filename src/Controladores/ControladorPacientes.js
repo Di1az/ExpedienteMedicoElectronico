@@ -1,7 +1,10 @@
-const Paciente = require('../Modelos/Paciente'); // Importa el modelo de Paciente
-
-
-
+const Usuario = require('../Modelos/Usuario');
+const Paciente = require('../Modelos/Paciente');
+const Expediente = require('../Modelos/Expediente');
+const Alergia = require('../Modelos/Alergia');
+const Enfermedad = require('../Modelos/Enfermedad');
+const PacienteAlergia = require('../Modelos/PacienteAlergia');
+const PacienteEnfermedad = require('../Modelos/PacienteEnfermedad');
 
 const obtenerPacientes = async (req, res) => {
   try {
@@ -14,32 +17,98 @@ const obtenerPacientes = async (req, res) => {
 };
 
 // Crear un nuevo paciente
-const crearPaciente = async (req, res) => {
-  try {
-    const { nombre, usuario, contraseña, genero } = req.body;
+const registrarPaciente = async (req, res) => {
+  const {
+      usuario,
+      password,
+      nombre,
+      apellidoPaterno,
+      apellidoMaterno,
+      curp,
+      fechaNacimiento,
+      sexo,
+      alergias,
+      enfermedades,
+      expediente
+  } = req.body;
 
-    // Validar que los campos no estén vacíos
-    if (!nombre || !usuario || !contraseña) {
-      return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+  const transaction = await Usuario.sequelize.transaction();
+
+  try {
+      // Paso 1: Crear el usuario
+      const nuevoUsuario = await Usuario.create({
+          nombre_usuario: usuario,
+          contraseña: password, // Asegúrate de hashear la contraseña
+          rol: 'paciente'
+      }, { transaction });
+
+      // Paso 2: Crear el paciente asociado al usuario
+      const nuevoPaciente = await Paciente.create({
+          nombre,
+          apellido_paterno: apellidoPaterno,
+          apellido_materno: apellidoMaterno,
+          curp,
+          fecha_nacimiento: fechaNacimiento,
+          sexo,
+          id_usuario: nuevoUsuario.id_usuario
+      }, { transaction });
+
+      // Paso 3: Crear el expediente médico
+      const nuevoExpediente = await Expediente.create({
+          pacienteId: nuevoPaciente.id_paciente,
+          listaEnfermedades: expediente.listaEnfermedades || null,
+          listaAlergias: expediente.listaAlergias || null,
+          listaMedicamentos: expediente.listaMedicamentos || null,
+          historialCitas: expediente.historialCitas || null,
+      }, { transaction });
+
+      // Paso 4: Asociar alergias y enfermedades
+      if (alergias && alergias.length > 0) {
+        for (const alergiaNombre of alergias) {
+            // Busca el ID correspondiente al nombre de la alergia
+            const alergia = await Alergia.findOne({
+                where: { nombre: alergiaNombre } // Ajusta el nombre del campo según tu modelo
+            });
+    
+            if (!alergia) {
+                throw new Error(`Alergia no encontrada: ${alergiaNombre}`);
+            }
+    
+            await PacienteAlergia.create({
+                id_paciente: nuevoPaciente.id_paciente,
+                id_alergia: alergia.id_alergia
+            }, { transaction });
+        }
     }
 
-    // Crear el paciente en la base de datos
-    const nuevoPaciente = await Paciente.create({
-      nombre,
-      usuario,
-      contraseña,
-      genero
-    });
+      if (enfermedades && enfermedades.length > 0) {
+          for (const enfermedadNombre of enfermedades) {
+                const enfermedad = await Enfermedad.findOne({
+                    where: { nombre: enfermedadNombre } // Ajusta el nombre del campo según tu modelo
+                });
 
-    // Responder con el paciente creado
-    return res.status(201).json(nuevoPaciente);
+                if (!enfermedad) {
+                    throw new Error(`Enfermedad no encontrada: ${enfermedadNombre}`);
+                }
+              
+              await PacienteEnfermedad.create({
+                  id_paciente: nuevoPaciente.id_paciente,
+                  id_enfermedad: enfermedad.id_enfermedad
+              }, { transaction });
+          }
+      }
+
+      // Confirmar transacción
+      await transaction.commit();
+      res.status(201).json({ message: 'Paciente registrado exitosamente.' });
   } catch (error) {
-    console.error('Error al crear paciente:', error);
-    return res.status(500).json({ error: 'Hubo un error al crear el paciente' });
+      // Revertir transacción en caso de error
+      await transaction.rollback();
+      console.error(error);
+      res.status(500).json({ error: 'Hubo un problema al registrar el paciente.' });
   }
 };
 
 module.exports = {
-  crearPaciente,
-  obtenerPacientes 
+  obtenerPacientes, registrarPaciente
 };

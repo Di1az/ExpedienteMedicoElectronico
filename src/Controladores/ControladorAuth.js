@@ -1,47 +1,37 @@
 const jwt = require('jsonwebtoken');
-const Medico = require('../Modelos/Medico');
-const Paciente = require('../Modelos/Paciente');
+const Usuario = require('../Modelos/Usuario');
 
-// Asegúrate de tener una clave secreta para JWT en tu archivo .env
-const JWT_SECRET = process.env.JWT_SECRET || 'claveSecretaPorDefecto'; // Cambia 'claveSecretaPorDefecto' en producción
+const ControladorAuth = {
+  login: async (req, res) => {
+    const { nombre_usuario, contraseña } = req.body;
 
-if (JWT_SECRET === 'claveSecretaPorDefecto') {
-  console.warn("⚠️ Advertencia: Usando una clave secreta por defecto. Establece JWT_SECRET en tu archivo .env para mayor seguridad.");
-}
+    try {
+      // Buscar el usuario por nombre de usuario
+      const usuario = await Usuario.findOne({ where: { nombre_usuario } });
 
-const iniciarSesion = async (req, res) => {
-  const { usuario, contraseña } = req.body;
+      if (!usuario) {
+        return res.status(401).json({ mensaje: 'Usuario o contraseña incorrectos' });
+      }
 
-  try {
-    // Primero intenta encontrar un usuario en el modelo Medico
-    let usuarioEncontrado = await Medico.findOne({ where: { usuario, contraseña } });
-    
-    // Si no se encuentra en Medico, intenta en el modelo Paciente
-    if (!usuarioEncontrado) {
-      usuarioEncontrado = await Paciente.findOne({ where: { usuario, contraseña } });
+      // Comparar la contraseña directamente (sin encriptar)
+      if (usuario.contraseña !== contraseña) {
+        return res.status(401).json({ mensaje: 'Usuario o contraseña incorrectos' });
+      }
+
+      // Crear el token JWT
+      const token = jwt.sign(
+        { id_usuario: usuario.id_usuario, rol: usuario.rol },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+
+      // Enviar respuesta con el token y rol
+      res.json({ token, rol: usuario.rol });
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      res.status(500).json({ mensaje: 'Error interno del servidor' });
     }
-
-    // Si no se encuentra en ninguno de los modelos, devuelve error de autenticación
-    if (!usuarioEncontrado) {
-      return res.status(401).json({ mensaje: 'Credenciales incorrectas' });
-    }
-
-    // Genera el token JWT con el id y rol del usuario encontrado
-    const token = jwt.sign(
-      {
-        id: usuarioEncontrado.id,
-        rol: usuarioEncontrado instanceof Medico ? 'medico' : 'paciente'
-      },
-      JWT_SECRET,
-      { expiresIn: '1h' } // Tiempo de expiración del token
-    );
-
-    res.json({ mensaje: 'Autenticación exitosa', token, rol: usuarioEncontrado instanceof Medico ? 'medico' : 'paciente' });
-
-  } catch (error) {
-    console.error("Error en iniciarSesion:", error);
-    res.status(500).json({ mensaje: 'Error del servidor al iniciar sesión' });
-  }
+  },
 };
 
-module.exports = { iniciarSesion };
+module.exports = ControladorAuth;

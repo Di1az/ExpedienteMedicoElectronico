@@ -1,27 +1,37 @@
+
 const { DataTypes } = require('sequelize');
-const sequelize = require('../database.js');
+const sequelize = require('../config/database');
+const Usuario = require('../Modelos/Usuario'); // Importa el modelo de Usuario
 
 const Medico = sequelize.define('Medico', {
-  id: {
+  id_doctor: {
     type: DataTypes.INTEGER,
-    primaryKey: true,
     autoIncrement: true,
+    primaryKey: true,
   },
   nombre: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(100),
     allowNull: false,
   },
-  usuario: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
+  especialidad: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
   },
-  contraseña: {
-    type: DataTypes.STRING,
+  telefono: {
+    type: DataTypes.STRING(15),
+    allowNull: true,
+  },
+  id_usuario: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-  }
+    references: {
+      model: Usuario, // Relación con la tabla Usuarios
+      key: 'id_usuario',
+    },
+  },
 }, {
-  timestamps: false 
+  tableName: 'Medicos',
+  timestamps: false,
 });
 
 module.exports = Medico;
