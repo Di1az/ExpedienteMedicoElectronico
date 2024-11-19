@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize'); 
+const { DataTypes } = require('sequelize');
 const sequelize = require('../database.js');
 
 const Paciente = sequelize.define('Paciente', {
@@ -9,18 +9,22 @@ const Paciente = sequelize.define('Paciente', {
   usuario: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: true, // Evita usuarios duplicados
   },
   contraseña: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      len: [8, 100], // Contraseña debe tener al menos 8 caracteres
+    },
   },
   genero: {
     type: DataTypes.STRING,
     allowNull: true,
   }
 }, {
-  timestamps: false 
+  // Si prefieres tener `createdAt` y `updatedAt`
+  timestamps: false, // Habilitado para almacenar las fechas de creación y actualización
 });
 
 module.exports = Paciente;
