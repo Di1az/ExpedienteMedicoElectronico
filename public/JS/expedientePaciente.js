@@ -133,5 +133,10 @@ document.querySelectorAll('.tab').forEach(tab => {
     });
 });
 
+
+function back(){
+    window.location.href = "dashboardPaciente.html";
+}
+
 // Inicializar la aplicación
 inicializarExpediente();

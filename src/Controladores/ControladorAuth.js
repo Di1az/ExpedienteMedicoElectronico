@@ -3,7 +3,7 @@ const Usuario = require('../Modelos/Usuario');
 
 const ControladorAuth = {
   login: async (req, res) => {
-    const { nombre_usuario, contraseña } = req.body;
+    const { nombre_usuario, contraseña, tipoUsuario } = req.body;
 
     try {
       // Buscar el usuario por nombre de usuario
@@ -16,6 +16,10 @@ const ControladorAuth = {
       // Comparar la contraseña directamente (sin encriptar)
       if (usuario.contraseña !== contraseña) {
         return res.status(401).json({ mensaje: 'Usuario o contraseña incorrectos' });
+      }
+
+      if (usuario.rol !== tipoUsuario) {
+        return res.status(401).json({ mensaje: `Rol incorrecto, tu no eres un: ${tipoUsuario}`});
       }
 
       // Crear el token JWT

@@ -9,20 +9,34 @@
 </head>
 <body>
   <div class="login-container">
+    <div class="logo-container">
+        <div class="logo-icon">⚕️</div>
+    </div>
     <h2>Iniciar Sesión</h2>
     
     <form id="loginForm">
-      
-      <label for="nombreUsuario">Usuario</label>
-      <input type="text" id="nombreUsuario" name="nombreUsuario" required>
+        <div class="user-type">
+            <input type="radio" id="paciente" name="tipo-usuario" value="paciente" checked>
+            <label for="paciente">Paciente</label>
+            
+            <input type="radio" id="medico" name="tipo-usuario" value="doctor" >
+            <label for="medico">Médico</label>
+        </div>
 
-      <label for="contraseña">Contraseña</label>
-      <input type="password" id="contraseña" name="contraseña" required>
+        <div class="form-group">
+            <label for="nombreUsuario">Usuario</label>
+            <input type="text" id="nombreUsuario" name="nombreUsuario" required>
+        </div>
 
-      <button type="submit">Ingresar</button>
-      <p id="errorMensaje" class="error"></p>
+        <div class="form-group">
+            <label for="contraseña">Contraseña</label>
+            <input type="password" id="contraseña" name="contraseña" required>
+        </div>
+
+        <button type="submit">Ingresar</button>
+        <p id="errorMensaje" class="error"></p>
     </form>
-  </div>
+ </div>
 
   <script src="/public/JS/login.js"></script>
 </body>

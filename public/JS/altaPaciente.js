@@ -157,3 +157,7 @@ document.getElementById('expedienteForm').addEventListener('submit', async (e) =
 function backToUsuario() {
   showTab('credenciales');
 }
+
+function back(){
+  window.location.href = "dashboardMedico.html";
+}

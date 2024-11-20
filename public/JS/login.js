@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     formLogin.addEventListener('submit', async (event) => {
       event.preventDefault();
 
+      const tipoUsuario = document.querySelector('input[name="tipo-usuario"]:checked').value;
       const nombre_usuario = document.getElementById('nombreUsuario').value;
       const contraseña = document.getElementById('contraseña').value;
 
@@ -14,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ nombre_usuario, contraseña }),
+          body: JSON.stringify({ nombre_usuario, contraseña, tipoUsuario}),
         });
 
         if (response.ok) {
