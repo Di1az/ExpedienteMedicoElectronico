@@ -17,10 +17,11 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api/auth', authRutas);
 app.use('/api/pacientes', pacienteRutas);
 app.use('/api/datos', datosRouter);
+app.use('/api',pacienteRutas );
 
 // Sincronización de Sequelize y puesta en marcha del servidor
 const PORT = process.env.PORT || 3001;
-sequelize.sync({ alter: true })
+sequelize.sync()
   .then(() => {
     console.log('Base de datos sincronizada');
     app.listen(PORT, () => {

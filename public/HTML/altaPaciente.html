@@ -8,12 +8,14 @@
 </head>
 <body>
     <div class="container">
-        <!-- Menú Dashboard Médico -->
-        <div id="medicoDashboardMenu" class="dashboard-menu">
-            <button class="menu-button" onclick="showTab('registroPaciente')">Registrar Paciente</button>
-            <button class="menu-button" onclick="showTab('consultarPaciente')">Consultar Paciente</button>
-            <button class="menu-button" onclick="showTab('agendarCita')">Agendar Cita</button>
-        </div>
+        <!-- Menú de navegación -->
+        <nav class="menu">
+            <ul>
+                <li><a href="altaPaciente.html" id="altaPacienteBtn">Alta Paciente</a></li>
+                <li><a href="consultarPacientes.html">Consultar Pacientes</a></li>
+                <li><a href="agendarCitas.html">Agendar Citas</a></li>
+            </ul>
+        </nav>
 
         <!-- Formulario del Dashboard Médico -->
         <form id="loginForm">

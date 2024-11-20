@@ -5,6 +5,7 @@ const Alergia = require('../Modelos/Alergia');
 const Enfermedad = require('../Modelos/Enfermedad');
 const PacienteAlergia = require('../Modelos/PacienteAlergia');
 const PacienteEnfermedad = require('../Modelos/PacienteEnfermedad');
+const Cita =require('../Modelos/Cita');
 
 const obtenerPacientes = async (req, res) => {
   try {
@@ -35,14 +36,12 @@ const registrarPaciente = async (req, res) => {
   const transaction = await Usuario.sequelize.transaction();
 
   try {
-      // Paso 1: Crear el usuario
       const nuevoUsuario = await Usuario.create({
           nombre_usuario: usuario,
-          contraseña: password, // Asegúrate de hashear la contraseña
+          contraseña: password, 
           rol: 'paciente'
       }, { transaction });
 
-      // Paso 2: Crear el paciente asociado al usuario
       const nuevoPaciente = await Paciente.create({
           nombre,
           apellido_paterno: apellidoPaterno,
@@ -53,7 +52,6 @@ const registrarPaciente = async (req, res) => {
           id_usuario: nuevoUsuario.id_usuario
       }, { transaction });
 
-      // Paso 3: Crear el expediente médico
       const nuevoExpediente = await Expediente.create({
           pacienteId: nuevoPaciente.id_paciente,
           listaEnfermedades: expediente.listaEnfermedades || null,
@@ -61,13 +59,12 @@ const registrarPaciente = async (req, res) => {
           listaMedicamentos: expediente.listaMedicamentos || null,
           historialCitas: expediente.historialCitas || null,
       }, { transaction });
-
-      // Paso 4: Asociar alergias y enfermedades
+     
       if (alergias && alergias.length > 0) {
         for (const alergiaNombre of alergias) {
-            // Busca el ID correspondiente al nombre de la alergia
+            
             const alergia = await Alergia.findOne({
-                where: { nombre: alergiaNombre } // Ajusta el nombre del campo según tu modelo
+                where: { nombre: alergiaNombre } 
             });
     
             if (!alergia) {
@@ -84,7 +81,7 @@ const registrarPaciente = async (req, res) => {
       if (enfermedades && enfermedades.length > 0) {
           for (const enfermedadNombre of enfermedades) {
                 const enfermedad = await Enfermedad.findOne({
-                    where: { nombre: enfermedadNombre } // Ajusta el nombre del campo según tu modelo
+                    where: { nombre: enfermedadNombre }
                 });
 
                 if (!enfermedad) {
