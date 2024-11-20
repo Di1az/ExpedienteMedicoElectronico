@@ -32,8 +32,32 @@ async function obtenerExpediente(pacienteId) {
     }
 }
 
+async function obtenerIdPaciente(id_usuario) {
+    try {
+        const response = await fetch(`http://localhost:3001/api/paciente-usuario/${id_usuario}`);
+        if (!response.ok) throw new Error('No se encontró el paciente asociado al usuario.');
+
+        const { id_paciente } = await response.json();
+        return id_paciente;
+    } catch (error) {
+        console.error('Error al obtener el ID del paciente:', error);
+        return null;
+    }
+}
+
 async function inicializarExpediente() {
-    const pacienteId = 4; // Cambiar por el ID del paciente que corresponda
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('No se pudo identificar al usuario. Inicie sesión nuevamente.');
+        return;
+    }
+
+    // Decodificar el token para obtener el ID del usuario
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const idUsuario = payload.id_usuario;
+
+    // Obtener el ID del paciente asociado
+    const pacienteId = await obtenerIdPaciente(idUsuario);
     const paciente = await obtenerExpediente(pacienteId);
 
     if (!paciente) return;
