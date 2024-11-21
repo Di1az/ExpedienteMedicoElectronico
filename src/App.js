@@ -3,6 +3,7 @@ const path = require('path');
 const cors = require('cors');
 const authRutas = require('./Rutas/RutasAuth');
 const pacienteRutas = require('./Rutas/Pacientes');
+const citasRutas = require('./Rutas/Citas');
 const datosRouter = require('./Rutas/Datos'); 
 const sequelize = require('./config/database');
 require('dotenv').config();
@@ -18,6 +19,7 @@ app.use('/api/auth', authRutas);
 app.use('/api/pacientes', pacienteRutas);
 app.use('/api/datos', datosRouter);
 app.use('/api',pacienteRutas );
+app.use('/api', citasRutas);
 
 // Sincronización de Sequelize y puesta en marcha del servidor
 const PORT = process.env.PORT || 3001;

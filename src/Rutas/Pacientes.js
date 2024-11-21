@@ -53,14 +53,14 @@ router.get('/paciente-usuario/:id_usuario', async (req, res) => {
 
         const paciente = await Paciente.findOne({
             where: { id_usuario }, 
-            attributes: ['id_paciente'], 
+            attributes: ['id_paciente', 'nombre'], 
         });
 
         if (!paciente) {
             return res.status(404).json({ error: 'Paciente no encontrado.' });
         }
 
-        res.json({ id_paciente: paciente.id_paciente });
+        res.json({ id_paciente: paciente.id_paciente, nombre: paciente.nombre, });
     } catch (error) {
         console.error('Error al obtener el paciente:', error);
         res.status(500).json({ error: 'Error interno del servidor.' });

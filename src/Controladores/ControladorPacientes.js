@@ -5,7 +5,6 @@ const Alergia = require('../Modelos/Alergia');
 const Enfermedad = require('../Modelos/Enfermedad');
 const PacienteAlergia = require('../Modelos/PacienteAlergia');
 const PacienteEnfermedad = require('../Modelos/PacienteEnfermedad');
-const Cita =require('../Modelos/Cita');
 
 const obtenerPacientes = async (req, res) => {
   try {
