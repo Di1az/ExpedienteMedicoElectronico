@@ -36,4 +36,15 @@ const registrarCita = async (req, res) => {
     }
 }
 
-module.exports= {registrarCita};
+
+const obtenerCitasPaciente = async (req,res) =>{
+    try {
+        const citasObtenidas = await citas.findAll();
+        res.status(200).json(citasObtenidas);
+      } catch (error) {
+        console.error('Error al obtener citas:', error);
+        res.status(500).json({ mensaje: 'Error al obtener citas' });
+      }
+}
+
+module.exports= {registrarCita, obtenerCitasPaciente};

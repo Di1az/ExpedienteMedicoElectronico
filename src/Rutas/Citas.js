@@ -5,4 +5,6 @@ const ControladorCita = require('../Controladores/ControladorCitas');
 
 router.post('/citas', ControladorCita.registrarCita);
 
+router.get('/obtenerCitas', ControladorCita.obtenerCitasPaciente);
+
 module.exports = router;

@@ -50,5 +50,5 @@ function agendarCita() {
 
 function verCitas() {
   // Redirigir a la página de ver citas
-  window.location.href = "misCitas.html";
+  window.location.href = "citasPaciente.html";
 }
