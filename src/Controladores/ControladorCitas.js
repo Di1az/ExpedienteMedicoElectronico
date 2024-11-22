@@ -47,4 +47,29 @@ const obtenerCitasPaciente = async (req,res) =>{
       }
 }
 
-module.exports= {registrarCita, obtenerCitasPaciente};
+const actualizarEstadoCita = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Buscar la cita en la base de datos
+        const cita = await citas.findByPk(id);
+        if (!cita) {
+            return res.status(404).json({ mensaje: 'Cita no encontrada.' });
+        }
+
+        // Actualizar el estado de la cita
+        cita.estado = 'Cancelada';
+        await cita.save();
+
+        res.status(200).json({ mensaje: 'Estado de la cita actualizado a Cancelada.' });
+    } catch (error) {
+        console.error('Error al actualizar el estado de la cita:', error);
+        res.status(500).json({
+            mensaje: 'Error al actualizar el estado de la cita. Por favor, intenta más tarde.',
+        });
+    }
+};
+
+
+
+module.exports= {registrarCita, obtenerCitasPaciente, actualizarEstadoCita};
