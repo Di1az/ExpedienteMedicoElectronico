@@ -1,4 +1,3 @@
-// Función para generar la lista de citas
 function renderizarCitas(citas) {
     const listaCitas = document.getElementById('appointmentList');
     listaCitas.innerHTML = '';
@@ -44,7 +43,6 @@ function renderizarCitas(citas) {
                 </div>
             </div>
             <div class="appointment-actions">
-                <button class="btn btn-edit">Editar</button>
                 <button class="btn btn-cancel" data-id="${cita.id_cita}">Cancelar</button>
             </div>
         `;
@@ -58,6 +56,61 @@ function renderizarCitas(citas) {
     });
 }
 
+// Obtener datos de citas y doctores solo del paciente autenticado
+document.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        document.getElementById('errorMessage').textContent = 'No se encontró sesión activa.';
+        return;
+    }
+
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const id_usuario = payload.id_usuario;
+
+        // Obtener el id del paciente asociado al usuario
+        const id_paciente = await obtenerIdPaciente(id_usuario);
+        if (!id_paciente) {
+            document.getElementById('errorMessage').textContent = 'No se encontró el paciente asociado a este usuario.';
+            return;
+        }
+
+        // Obtener las citas del paciente
+        const [citas, doctores] = await Promise.all([
+            fetch(`http://localhost:3001/api/obtenerCitas`, {
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                }
+            }).then(respuesta => respuesta.json()),
+
+            fetch(`http://localhost:3001/api/datos/doctores`, {
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                }
+            }).then(respuesta => respuesta.json()),
+        ]);
+
+        // Filtrar las citas del paciente
+        const citasDelPaciente = citas.filter(cita => cita.id_paciente === id_paciente);
+
+        // Combinar datos de doctores con las citas
+        const citasCombinadas = citasDelPaciente.map(cita => {
+            const doctor = doctores.find(doc => doc.id_doctor === cita.id_doctor);
+            return {
+                ...cita,
+                nombre: doctor ? doctor.nombre : 'Desconocido',
+                especialidad: doctor ? doctor.especialidad : 'Sin especialidad',
+            };
+        });
+
+        // Renderizar citas
+        renderizarCitas(citasCombinadas);
+    } catch (error) {
+        console.error('Error al obtener los datos:', error);
+        document.getElementById('errorMessage').textContent = 'Hubo un error al cargar las citas.';
+    }
+});
 
 // Función para actualizar el estado de la cita
 function eliminarCita(evento) {
@@ -100,6 +153,20 @@ function eliminarCita(evento) {
     });
 }
 
+// Función auxiliar para obtener el color según el estado
+const obtenerColorEstado = (estado) => {
+    switch (estado.toLowerCase()) {
+        case 'pendiente':
+            return 'green';
+        case 'cancelada':
+            return 'red';
+        case 'finalizada':
+            return 'black';
+        default:
+            return 'black';
+    }
+};
+
 
 // Función para formatear fechas
 function formatearFecha(fechaISO) {
@@ -115,35 +182,19 @@ function formatearFecha(fechaISO) {
     return new Intl.DateTimeFormat('es-ES', opciones).format(fecha);
 }
 
-// Obtener datos de citas y doctores
-Promise.all([
-    fetch('http://localhost:3001/api/obtenerCitas', {
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-    }).then(respuesta => respuesta.json()),
+async function obtenerIdPaciente(id_usuario) {
+    try {
+        const response = await fetch(`http://localhost:3001/api/paciente-usuario/${id_usuario}`);
+        if (!response.ok) throw new Error('No se encontró el paciente asociado al usuario.');
 
-    fetch('http://localhost:3001/api/datos/doctores', {
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-    }).then(respuesta => respuesta.json())
-])
-.then(([citas, doctores]) => {
-    const citasCombinadas = citas.map(cita => {
-        const doctor = doctores.find(doc => doc.id_doctor === cita.id_doctor);
-        return {
-            ...cita,
-            nombre: doctor ? doctor.nombre : 'Desconocido',
-            especialidad: doctor ? doctor.especialidad : 'Sin especialidad'
-        };
-    });
+        const { id_paciente } = await response.json();
+        return id_paciente;
+    } catch (error) {
+        console.error('Error al obtener el ID del paciente:', error);
+        return null;
+    }
+}
 
-    renderizarCitas(citasCombinadas);
-})
-.catch(error => {
-    console.error('Error al obtener los datos:', error);
-    document.getElementById('noAppointments').style.display = 'block';
-});
-
-
+function back(){
+    window.location.href = "dashboardPaciente.html";
+}

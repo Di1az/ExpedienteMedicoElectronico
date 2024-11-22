@@ -89,7 +89,10 @@ async function inicializarExpediente() {
 
     // Alergias
     const alergiasContainer = document.getElementById('alergiasList');
-    const alergias = Array.isArray(paciente.alergias) ? paciente.alergias : [paciente.alergias];
+    const alergias = paciente.alergias && paciente.alergias.trim() !== '' 
+        ? paciente.alergias.split(',').map(alergia => alergia.trim()) 
+        : [];
+
     if (alergias.length > 0) {
         alergiasContainer.innerHTML = alergias
             .map(alergia => `
@@ -104,7 +107,10 @@ async function inicializarExpediente() {
 
     // Enfermedades
     const enfermedadesContainer = document.getElementById('enfermedadesList');
-    const enfermedades = Array.isArray(paciente.enfermedades) ? paciente.enfermedades : [paciente.enfermedades];
+    const enfermedades = paciente.enfermedades && paciente.enfermedades.trim() !== '' 
+        ? paciente.enfermedades.split(',').map(enfermedad => enfermedad.trim()) 
+        : [];
+
     if (enfermedades.length > 0) {
         enfermedadesContainer.innerHTML = enfermedades
             .map(enfermedad => `

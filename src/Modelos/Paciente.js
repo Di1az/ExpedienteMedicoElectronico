@@ -38,10 +38,6 @@ const Paciente = sequelize.define('Paciente', {
     type: DataTypes.DATE,
     allowNull: true,
   },
-  telefono: {
-    type: DataTypes.STRING(15),
-    allowNull: true,
-  },
   id_usuario: {
     type: DataTypes.INTEGER,
     allowNull: false,

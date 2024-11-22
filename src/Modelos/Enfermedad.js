@@ -13,10 +13,6 @@ const Enfermedad = sequelize.define('Enfermedad', {
     allowNull: false,
     unique: true,
   },
-  descripcion: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-  },
 }, {
   tableName: 'Enfermedades',
   timestamps: false,
