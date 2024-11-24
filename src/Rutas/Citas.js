@@ -9,5 +9,6 @@ router.get('/obtenerCitas', ControladorCita.obtenerCitasPaciente);
 
 router.patch('/citas/:id/estado', ControladorCita.actualizarEstadoCita);
 
+router.get('/citas/:id_doctor', ControladorCita.obtenerCitasDoctor);
 
 module.exports = router;

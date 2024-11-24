@@ -47,6 +47,21 @@ const obtenerCitasPaciente = async (req,res) =>{
       }
 }
 
+const obtenerCitasDoctor = async (req,res) =>{
+    const { id_doctor } = req.params;
+
+    try {
+        const citasDoc = await citas.findAll({
+            where: { id_doctor }
+        });
+
+        res.json(citasDoc);
+    } catch (error) {
+        console.error('Error al obtener citas:', error);
+        res.status(500).json({ error: 'No se pudieron obtener las citas' });
+    }
+}
+
 const actualizarEstadoCita = async (req, res) => {
     try {
         const { id } = req.params;
@@ -72,4 +87,4 @@ const actualizarEstadoCita = async (req, res) => {
 
 
 
-module.exports= {registrarCita, obtenerCitasPaciente, actualizarEstadoCita};
+module.exports= {registrarCita, obtenerCitasPaciente, actualizarEstadoCita, obtenerCitasDoctor};

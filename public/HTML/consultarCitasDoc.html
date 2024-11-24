@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Citas Médicas</title>
+    <link rel="icon" href="/public/logo.png" />
+    <link rel="stylesheet" href="../CSS/consultarCitasDoc.css">
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">Panel de Citas</h1>
+        <div class="filters">
+            <button class="filter-btn active" data-filter="Pendiente">Pendientes</button>
+            <button class="filter-btn" data-filter="Finalizada">Finalizadas</button>
+        </div>
+    </div>
+
+    <div class="appointments-container" id="appointmentsContainer">
+        <!-- Las citas se generarán dinámicamente aquí -->
+    </div>
+
+    <script src="../JS/consultarCitasDoc.js"></script>
+</body>
+</html>

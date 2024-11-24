@@ -1,0 +1,135 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f0f2f5;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 0 10px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1a1a1a;
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.filter-btn.active {
+    background-color: #2563eb;
+    color: white;
+}
+
+.filter-btn:not(.active) {
+    background-color: #e5e7eb;
+    color: #1a1a1a;
+}
+
+.appointments-container {
+    display: grid;
+    gap: 16px;
+}
+
+.appointment-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.patient-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1a1a1a;
+}
+
+.date-time {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.card-content {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.info-item {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.info-item strong {
+    color: #374151;
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.btn-finish {
+    background-color: #059669;
+    color: white;
+}
+
+.btn-finish:hover {
+    background-color: #047857;
+}
+
+.btn-cancel {
+    background-color: #dc2626;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background-color: #b91c1c;
+}
+
+.hidden {
+    display: none;
+}
