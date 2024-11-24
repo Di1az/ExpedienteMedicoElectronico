@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Consultar Cita</title>
+    <link rel="stylesheet" href="../CSS/atenderCita.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Detalles de la Cita</h1>
+        <form id="appointmentForm">
+            <!-- Información de la cita -->
+            <h3 class="section-title">Información Personal</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="patientName">Paciente:</label>
+                    <input type="text" id="patientName" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="appointmentDate">Fecha:</label>
+                    <input type="text" id="appointmentDate" disabled>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="appointmentReason">Motivo:</label>
+                    <textarea id="appointmentReason" disabled></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="diagnosis">Diagnóstico:</label>
+                    <textarea id="diagnosis" placeholder="Escribe el diagnóstico aquí..."></textarea>
+                </div>
+            </div>
+
+            <!-- Información Médica -->
+            <h3 class="section-title">Información Médica</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="searchAlergias">Alergias</label>
+                    <div class="search-container">
+                        <input type="text" id="searchAlergias" placeholder="Buscar alergias...">
+                    </div>
+                    <div class="checkbox-list large-list" id="alergiasLista">
+                        <!-- Alergias se agregarán dinámicamente -->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="searchEnfermedades">Enfermedades</label>
+                    <div class="search-container">
+                        <input type="text" id="searchEnfermedades" placeholder="Buscar enfermedades...">
+                    </div>
+                    <div class="checkbox-list large-list" id="enfermedadesLista">
+                        <!-- Enfermedades se agregarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="saveDiagnosisButton">Guardar Diagnóstico</button>
+        </form>
+    </div>
+    <script src="../JS/atenderCita.js"></script>
+</body>
+</html>

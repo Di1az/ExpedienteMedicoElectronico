@@ -18,10 +18,17 @@ const Cita = sequelize.define('Cita', {
     allowNull: true,
   },
   estado: {
-    type: DataTypes.ENUM('Pendiente', 'Cancelada', 'Finalizada'),
+   type: DataTypes.ENUM('Pendiente', 'Cancelada', 'Finalizada'),
     allowNull: false,
     defaultValue: 'Pendiente',
-  },
+  }, 
+  
+  diagnostico: {
+    type: DataTypes.STRING(255),
+     allowNull: false,
+     defaultValue: 'Sin diagnostico',
+   }, 
+   
   id_doctor: {
     type: DataTypes.INTEGER,
     allowNull: false,

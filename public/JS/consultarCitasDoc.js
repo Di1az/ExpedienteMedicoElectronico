@@ -25,12 +25,16 @@ function createAppointmentCard(appointment) {
             </div>
             <div class="card-actions">
                 ${appointment.estado === 'Pendiente' ? `
-                    <button class="btn btn-finish" onclick="finishAppointment(${appointment.id_cita})">Finalizar</button>
+                    <button class="btn btn-finish" onclick="viewAppointment(${appointment.id_cita})">Consultar</button>
                     <button class="btn btn-cancel" onclick="cancelAppointment(${appointment.id_cita})">Cancelar</button>
-                ` : ''}
+                ` : ''} 
             </div>
         </div>
     `;
+}
+
+function viewAppointment(id) {
+    window.location.href = `atenderCita.html?id=${id}`;
 }
 
 function renderAppointments(status) {

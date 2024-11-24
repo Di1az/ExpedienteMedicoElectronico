@@ -2,7 +2,7 @@ const citas = require('../Modelos/Cita');
 
 const registrarCita = async (req, res) => {
     try {
-        const { id_paciente, fecha, hora, doctor, motivo } = req.body;
+        const { id_paciente, fecha, hora, doctor, motivo, diagnostico } = req.body;
 
         // Validar datos obligatorios
         if (!id_paciente || !fecha || !hora || !doctor || !motivo) {
@@ -21,6 +21,7 @@ const registrarCita = async (req, res) => {
             fecha: fechaHora, 
             id_doctor: doctor,
             motivo,
+            diagnostico,
         });
 
         // Responder al cliente con éxito
