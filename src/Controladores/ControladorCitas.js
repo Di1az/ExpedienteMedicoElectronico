@@ -86,6 +86,38 @@ const actualizarEstadoCita = async (req, res) => {
     }
 };
 
+const obtenerCitaPorId = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const cita = await citas.findByPk(id, {
+            include: [
+                {
+                    model: Paciente,  // Incluimos el modelo Paciente
+                    attributes: ['nombre', 'apellido_paterno', 'apellido_materno']  // Seleccionamos los atributos que necesitamos
+                },
+                {
+                    model: Doctor,  // Si también necesitas los datos del doctor
+                    attributes: ['nombre', 'apellido']
+                }
+            ]
+        });
+
+        if (!cita) {
+            return res.status(404).json({ mensaje: 'Cita no encontrada.' });
+        }
+
+        // Responder con los datos de la cita y el paciente asociado
+        res.status(200).json({
+            nombrePaciente: `${cita.paciente.nombre} ${cita.paciente.apellido_paterno} ${cita.paciente.apellido_materno}`,
+            fechaCita: cita.fecha,
+            motivo: cita.motivo
+        });
+    } catch (error) {
+        console.error('Error al obtener los detalles de la cita:', error);
+        res.status(500).json({ mensaje: 'Error al obtener la cita.' });
+    }
+};
 
 
-module.exports= {registrarCita, obtenerCitasPaciente, actualizarEstadoCita, obtenerCitasDoctor};
+module.exports= {registrarCita, obtenerCitasPaciente, actualizarEstadoCita, obtenerCitasDoctor, obtenerCitaPorId};

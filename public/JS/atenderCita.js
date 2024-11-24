@@ -70,76 +70,59 @@ searchEnfermedadesInput.addEventListener('input', (e) => {
     createCheckboxList(filteredEnfermedades, 'enfermedadesLista');
 });
 
-// Cargar datos de la cita al iniciar la página
-async function loadAppointment() {
+// Inicializar el formulario y cargar la cita al cargar la página
+document.addEventListener('DOMContentLoaded', async () => {
+    await inicializarFormulario();
+    await inicializarAtencionCita(); // Cambiamos `loadAppointment` por esta función
+});
+
+// Función para inicializar los datos de la cita
+async function inicializarAtencionCita() {
+    // Obtener el ID de la cita desde la URL
     const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
+    const idCita = urlParams.get('id');
 
+    if (!idCita) {
+        alert('No se especificó una cita válida.');
+        return;
+    }
+
+    console.log('ID de la cita obtenido:', idCita);
+
+    // Obtener datos de la cita
+    const cita = await obtenerDatosCita(idCita);
+
+    if (!cita) {
+        alert('No se pudieron cargar los datos de la cita.');
+        return;
+    }
+
+    // Asignar datos al formulario
+    document.getElementById('patientName').value = cita.nombrePaciente || 'Desconocido';
+    document.getElementById('appointmentDate').value = cita.fechaCita ? formatearFecha(cita.fechaCita) : 'Sin fecha';
+    document.getElementById('appointmentReason').value = cita.motivo || 'Sin motivo especificado';
+}
+
+async function obtenerDatosCita(idCita) {
     try {
-        const response = await fetch(`http://localhost:3001/api/citas/${id}`);
-        const appointment = await response.json();
+        const response = await fetch(`http://localhost:3001/api/citas/${idCita}`);
+        if (!response.ok) throw new Error('Error al obtener los datos de la cita');
 
-        // Rellenar los campos de la cita
-        document.getElementById('patientName').value = `Paciente ${appointment.id_paciente}`;
-        document.getElementById('appointmentDate').value = new Date(appointment.fecha).toLocaleString();
-        document.getElementById('appointmentReason').value = appointment.motivo;
-
-        // Marcar las alergias y enfermedades del paciente
-        const { alergiasPaciente, enfermedadesPaciente } = appointment;
-        marcarCheckboxes('alergiasLista', alergiasPaciente);
-        marcarCheckboxes('enfermedadesLista', enfermedadesPaciente);
+        return await response.json();
     } catch (error) {
-        console.error('Error al cargar la cita:', error);
+        console.error('Error al obtener los datos de la cita:', error);
+        return null;
     }
 }
 
-// Función para marcar checkboxes según los datos del paciente
-function marcarCheckboxes(containerId, items) {
-    const container = document.getElementById(containerId);
-    items.forEach(item => {
-        const checkbox = container.querySelector(`input[value="${item}"]`);
-        if (checkbox) checkbox.checked = true;
+function formatearFecha(fecha) {
+    if (!fecha) return 'Sin fecha';
+    const date = new Date(fecha);
+    if (isNaN(date.getTime())) return 'Sin fecha';
+    return date.toLocaleDateString('es-MX', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
     });
 }
 
-// Guardar diagnóstico
-saveDiagnosisButton.addEventListener('click', async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
-    const diagnosis = document.getElementById('diagnosis').value;
-
-    // Obtener alergias y enfermedades seleccionadas
-    const selectedAlergias = Array.from(document.querySelectorAll('#alergiasLista input:checked'))
-        .map(input => input.value);
-    const selectedEnfermedades = Array.from(document.querySelectorAll('#enfermedadesLista input:checked'))
-        .map(input => input.value);
-
-    try {
-        const response = await fetch(`http://localhost:3001/api/citas/${id}/diagnostico`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                diagnostico: diagnosis,
-                alergias: selectedAlergias,
-                enfermedades: selectedEnfermedades
-            }),
-        });
-
-        if (response.ok) {
-            alert('Diagnóstico guardado correctamente.');
-            window.location.href = 'consultarCitasDoc.html';
-        } else {
-            alert('Error al guardar el diagnóstico.');
-        }
-    } catch (error) {
-        console.error('Error al guardar el diagnóstico:', error);
-    }
-});
-
-// Inicializar el formulario y cargar la cita al cargar la página
-document.addEventListener('DOMContentLoaded', () => {
-    inicializarFormulario();
-    loadAppointment();
-});
