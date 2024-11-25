@@ -114,6 +114,24 @@ const obtenerCitaPorId = async (req, res) => {
     }
 };
 
+const actualizarDiagnostico = async (req, res) => {
+    const { id } = req.params;
+    const { diagnostico, estado } = req.body;
 
+    try {
+        const cita = await citas.findByPk(id);
+        if (!cita) return res.status(404).json({ message: 'Cita no encontrada' });
 
-module.exports= {registrarCita, obtenerCitasPaciente, actualizarEstadoCita, obtenerCitasDoctor, obtenerCitaPorId};
+        cita.diagnostico = diagnostico;
+        if (estado) cita.estado = estado;
+        await cita.save();
+
+        res.json({ message: 'Cita actualizada exitosamente', cita });
+    } catch (error) {
+        console.error('Error al actualizar la cita:', error);
+        res.status(500).json({ message: 'Error al actualizar la cita' });
+    }
+};
+
+module.exports= {registrarCita, obtenerCitasPaciente, 
+    actualizarEstadoCita, obtenerCitasDoctor, obtenerCitaPorId, actualizarDiagnostico};

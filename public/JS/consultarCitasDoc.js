@@ -40,9 +40,14 @@ function viewAppointment(id_cita) {
 
 
 function renderAppointments(status) {
+    console.log("Estado actual:", status);
+    console.log("Citas antes de filtrar:", appointments); 
+
     // Filtrar las citas basadas en el estado seleccionado
     const filteredAppointments = appointments.filter(app => app.estado === status);
-    
+
+    console.log("Citas filtradas:", filteredAppointments);
+
     // Renderizar las citas en el contenedor
     appointmentsContainer.innerHTML = filteredAppointments
         .map(appointment => createAppointmentCard(appointment))
@@ -53,14 +58,14 @@ function renderAppointments(status) {
 function finishAppointment(id) {
     const appointment = appointments.find(app => app.id === id);
     if (appointment) {
-        appointment.status = 'finished';
-        renderAppointments('pending');
+        appointment.status = 'Finalizada';
+        renderAppointments('Pendiente');
     }
 }
 
 function cancelAppointment(id) {
     appointments = appointments.filter(app => app.id !== id);
-    renderAppointments('pending');
+    renderAppointments('Pendiente');
 }
 
 // Obtener el ID del doctor desde el token

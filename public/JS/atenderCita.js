@@ -1,6 +1,6 @@
 // Elementos del DOM
 const form = document.getElementById('appointmentForm');
-const saveDiagnosisButton = document.getElementById('saveDiagnosisButton');
+const saveDiagnosisButton = document.getElementById('saveDiagnosisButton').addEventListener('click', guardarDiagnostico);;
 const searchAlergiasInput = document.getElementById('searchAlergias');
 const searchEnfermedadesInput = document.getElementById('searchEnfermedades');
 
@@ -23,8 +23,8 @@ async function obtenerDatos(endpoint) {
 // Inicializar formulario con alergias y enfermedades del paciente
 async function inicializarFormulario() {
     // Primero obtienes las alergias y enfermedades de la base de datos
-    alergias = await obtenerDatos('alergias'); // Obtiene datos de todas las alergias
-    enfermedades = await obtenerDatos('enfermedades'); // Obtiene datos de todas las enfermedades
+    alergias = await obtenerDatos('alergias'); 
+    enfermedades = await obtenerDatos('enfermedades'); 
 
     const idCita = localStorage.getItem('selectedAppointmentId');
     if (!idCita) {
@@ -147,6 +147,42 @@ async function obtenerPacientes() {
     }
 }
 
+//Guardar Diagnostico
+async function guardarDiagnostico() {
+    const idCita = localStorage.getItem('selectedAppointmentId');
+    if (!idCita) {
+        alert('No se especificó una cita válida.');
+        return;
+    }
+
+    const diagnostico = document.getElementById('diagnosis').value.trim();
+    if (!diagnostico) {
+        alert('Por favor, escribe un diagnóstico antes de guardar.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:3001/api/citas/${idCita}/diagnostico`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ diagnostico, estado: 'Finalizada' })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Error al guardar el diagnóstico');
+        }
+
+        alert('Diagnóstico guardado y cita finalizada exitosamente.');
+        back();
+    } catch (error) {
+        console.error('Error al guardar el diagnóstico:', error);
+        alert('Hubo un problema al guardar el diagnóstico. Inténtalo nuevamente.');
+    }
+}
+
 function formatearFecha(fecha) {
     if (!fecha) return 'Sin fecha';
     const date = new Date(fecha);
@@ -159,5 +195,6 @@ function formatearFecha(fecha) {
 }
 
 function back(){
+    
     window.location.href = "consultarCitasDoc.html";
 }

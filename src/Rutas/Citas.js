@@ -12,4 +12,6 @@ router.get('/citas/:id_doctor', ControladorCita.obtenerCitasDoctor);
 
 router.get('/citasConsulta/:id_cita', ControladorCita.obtenerCitaPorId);
 
+router.put('/citas/:id/diagnostico', ControladorCita.actualizarDiagnostico);
+
 module.exports = router;
