@@ -3,6 +3,7 @@ const router = express.Router();
 const Alergia  = require('../Modelos/Alergia');
 const Enfermedad = require('../Modelos/Enfermedad');
 const Doctor = require('../Modelos/Medico');
+const Paciente = require('../Modelos/Paciente');
 
 router.get('/alergias', async (req, res) => {
     try {
@@ -33,6 +34,18 @@ router.get('/doctores', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ mensaje: 'Error al obtener la lista de doctores' });
+    }
+});
+
+router.get('/pacientes', async (req, res) => {
+    try {
+        const pacientes = await Paciente.findAll({
+            attributes: ['id_paciente', 'nombre', 'apellido_paterno', 'apellido_materno']
+        });
+        res.json(pacientes);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ mensaje: 'Error al obtener la lista de pacientes' });
     }
 });
 

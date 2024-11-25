@@ -20,55 +20,60 @@ async function obtenerDatos(endpoint) {
     }
 }
 
-// Crear lista de checkboxes dinámicamente
-function createCheckboxList(items, containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = ''; // Limpia contenido previo
-
-    items.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'checkbox-item';
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = item.toLowerCase().replace(/\s+/g, '-');
-        checkbox.value = item;
-
-        const label = document.createElement('label');
-        label.htmlFor = checkbox.id;
-        label.textContent = item;
-
-        div.appendChild(checkbox);
-        div.appendChild(label);
-        container.appendChild(div);
-    });
-}
-
-// Filtrar elementos según texto ingresado
-function filterItems(searchText, items) {
-    return items.filter(item => item.toLowerCase().includes(searchText.toLowerCase()));
-}
-
-// Inicializar listas de alergias y enfermedades
+// Inicializar formulario con alergias y enfermedades del paciente
 async function inicializarFormulario() {
-    alergias = await obtenerDatos('alergias'); // Obtiene datos de alergias
-    enfermedades = await obtenerDatos('enfermedades'); // Obtiene datos de enfermedades
+    // Primero obtienes las alergias y enfermedades de la base de datos
+    alergias = await obtenerDatos('alergias'); // Obtiene datos de todas las alergias
+    enfermedades = await obtenerDatos('enfermedades'); // Obtiene datos de todas las enfermedades
 
-    // Crear listas de checkboxes
-    createCheckboxList(alergias.map(a => a.nombre), 'alergiasLista');
-    createCheckboxList(enfermedades.map(e => e.nombre), 'enfermedadesLista');
+    const idCita = localStorage.getItem('selectedAppointmentId');
+    if (!idCita) {
+        alert('No se especificó una cita válida.');
+        return;
+    }
+
+    // Obtener datos de la cita
+    const cita = await obtenerDatosCita(idCita);
+
+    // Luego, obtienes el expediente del paciente actual
+    const pacienteId = cita.idPaciente;
+    const expedientePaciente = await obtenerExpedientePaciente(pacienteId);
+
+    // Filtrar las alergias y enfermedades que están en el expediente del paciente
+    const alergiasPaciente = expedientePaciente.alergias.split(',').map(a => a.trim());
+    const enfermedadesPaciente = expedientePaciente.enfermedades.split(',').map(e => e.trim());
+
+    // Enfermedades
+    const enfermedadesContainer = document.getElementById('enfermedadesLista');
+
+    if (enfermedadesPaciente.length > 0) {
+        enfermedadesContainer.innerHTML = enfermedadesPaciente
+            .map(enfermedad => `
+                <div class="list-item">
+                    <span class="dot dot-yellow"></span>
+                    ${enfermedad}
+                </div>
+            `).join('');
+    } else {
+        enfermedadesContainer.innerHTML = '<p class="empty-message">No se han registrado enfermedades</p>';
+    }
+
+    // Alergias
+    const alergiasContainer = document.getElementById('alergiasLista');
+
+    if (alergiasPaciente.length > 0) {
+        alergiasContainer.innerHTML = alergiasPaciente
+            .map(alergia => `
+                <div class="list-item">
+                    <span class="dot dot-red"></span>
+                    ${alergia}
+                </div>
+            `).join('');
+    } else {
+        alergiasContainer.innerHTML = '<p class="empty-message">No se han registrado alergias</p>';
+    }
 }
 
-// Listeners para búsqueda en las listas
-searchAlergiasInput.addEventListener('input', (e) => {
-    const filteredAlergias = filterItems(e.target.value, alergias.map(a => a.nombre));
-    createCheckboxList(filteredAlergias, 'alergiasLista');
-});
-
-searchEnfermedadesInput.addEventListener('input', (e) => {
-    const filteredEnfermedades = filterItems(e.target.value, enfermedades.map(e => e.nombre));
-    createCheckboxList(filteredEnfermedades, 'enfermedadesLista');
-});
 
 // Inicializar el formulario y cargar la cita al cargar la página
 document.addEventListener('DOMContentLoaded', async () => {
@@ -76,42 +81,69 @@ document.addEventListener('DOMContentLoaded', async () => {
     await inicializarAtencionCita(); // Cambiamos `loadAppointment` por esta función
 });
 
-// Función para inicializar los datos de la cita
-async function inicializarAtencionCita() {
-    // Obtener el ID de la cita desde la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const idCita = urlParams.get('id');
-
-    if (!idCita) {
-        alert('No se especificó una cita válida.');
-        return;
+// Obtener datos del expediente del paciente
+async function obtenerExpedientePaciente(idPaciente) {
+    try {
+        const response = await fetch(`http://localhost:3001/api/pacientes/expediente/${idPaciente}`);
+        if (!response.ok) throw new Error('Error al obtener el expediente del paciente');
+        return await response.json(); 
+    } catch (error) {
+        console.error(error);
+        return { alergias: [], enfermedades: [] }; // Devuelve objetos vacíos en caso de error
     }
-
-    console.log('ID de la cita obtenido:', idCita);
-
-    // Obtener datos de la cita
-    const cita = await obtenerDatosCita(idCita);
-
-    if (!cita) {
-        alert('No se pudieron cargar los datos de la cita.');
-        return;
-    }
-
-    // Asignar datos al formulario
-    document.getElementById('patientName').value = cita.nombrePaciente || 'Desconocido';
-    document.getElementById('appointmentDate').value = cita.fechaCita ? formatearFecha(cita.fechaCita) : 'Sin fecha';
-    document.getElementById('appointmentReason').value = cita.motivo || 'Sin motivo especificado';
 }
 
-async function obtenerDatosCita(idCita) {
+async function obtenerDatosCita(id_cita) {
     try {
-        const response = await fetch(`http://localhost:3001/api/citas/${idCita}`);
+        const response = await fetch(`http://localhost:3001/api/citasConsulta/${id_cita}`);
         if (!response.ok) throw new Error('Error al obtener los datos de la cita');
 
         return await response.json();
     } catch (error) {
         console.error('Error al obtener los datos de la cita:', error);
         return null;
+    }
+}
+
+// Función para inicializar los datos de la cita
+async function inicializarAtencionCita() {
+    const idCita = localStorage.getItem('selectedAppointmentId');
+    if (!idCita) {
+        alert('No se especificó una cita válida.');
+        return;
+    }
+
+    // Obtener datos de la cita
+    const cita = await obtenerDatosCita(idCita);
+    if (!cita) {
+        alert('No se pudieron cargar los datos de la cita.');
+        return;
+    }
+
+    // Obtener la lista de pacientes
+    const pacientes = await obtenerPacientes();
+    const paciente = pacientes.find(paciente => (paciente.id_paciente) === (cita.idPaciente));
+
+    // Asignar datos al formulario
+    document.getElementById('patientName').value = paciente 
+        ? `${paciente.nombre} ${paciente.apellido_paterno} ${paciente.apellido_materno}`
+        : 'Paciente desconocido';
+    document.getElementById('appointmentDate').value = cita.fechaCita 
+        ? formatearFecha(cita.fechaCita) 
+        : 'Sin fecha';
+    document.getElementById('appointmentReason').value = cita.motivo || 'Sin motivo especificado';
+}
+
+async function obtenerPacientes() {
+    try {
+        const response = await fetch('http://localhost:3001/api/datos/pacientes');
+        if (!response.ok) {
+            throw new Error('Error al obtener pacientes');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error al cargar pacientes:', error);
+        return [];
     }
 }
 
@@ -126,3 +158,6 @@ function formatearFecha(fecha) {
     });
 }
 
+function back(){
+    window.location.href = "consultarCitasDoc.html";
+}

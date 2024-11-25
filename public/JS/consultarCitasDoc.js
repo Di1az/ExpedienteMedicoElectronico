@@ -9,7 +9,7 @@ function createAppointmentCard(appointment) {
     return `
         <div class="appointment-card" data-id="${appointment.id_cita}" data-status="${appointment.estado}">
             <div class="card-header">
-                <span class="patient-name">Paciente ${appointment.id_paciente}</span>
+                <span class="patient-name">Paciente ${appointment.patientName}</span>
                 <div class="date-time">
                     <span>📅 ${new Date(appointment.fecha).toLocaleDateString()}</span>
                     <span>🕒 ${new Date(appointment.fecha).toLocaleTimeString()}</span>
@@ -33,9 +33,11 @@ function createAppointmentCard(appointment) {
     `;
 }
 
-function viewAppointment(id) {
-    window.location.href = `atenderCita.html?id=${id}`;
+function viewAppointment(id_cita) {
+    localStorage.setItem('selectedAppointmentId', id_cita); 
+    window.location.href = 'atenderCita.html';
 }
+
 
 function renderAppointments(status) {
     // Filtrar las citas basadas en el estado seleccionado
@@ -86,11 +88,39 @@ async function obtenerCitas(id_doctor) {
     }
 }
 
+async function obtenerPacientes() {
+    try {
+        const response = await fetch('http://localhost:3001/api/datos/pacientes');
+        if (!response.ok) {
+            throw new Error('Error al obtener pacientes');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error al cargar pacientes:', error);
+        return [];
+    }
+}
+
+
 async function inicializarCitas() {
     const id_doctor = obtenerIdDoctor();
     if (!id_doctor) return;
 
-    appointments = await obtenerCitas(id_doctor);
+    const [citas, pacientes] = await Promise.all([
+        obtenerCitas(id_doctor),
+        obtenerPacientes()
+    ]);
+
+    appointments = citas.map(cita => {
+        const paciente = pacientes.find(p => p.id_paciente === cita.id_paciente);
+        return {
+            ...cita,
+            patientName: paciente
+                ? `${paciente.nombre} ${paciente.apellido_paterno} ${paciente.apellido_materno}`
+                : 'Paciente desconocido', 
+        };
+    });
+
     renderAppointments('Pendiente'); 
 }
 

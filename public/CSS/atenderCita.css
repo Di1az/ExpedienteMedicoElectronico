@@ -138,3 +138,39 @@ textarea:disabled {
     background-color: #f8f9fa;
     cursor: not-allowed;
 }
+
+.list-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.dot-red {
+    background-color: #EF4444;
+}
+
+.dot-yellow {
+    background-color: #F59E0B;
+}
+
+.empty-message {
+    color: #6B7280;
+    font-style: italic;
+}
+
+.back-button {
+    background-color: #ffc107;
+    color: white;
+    border: none;
+}
+
+.back-button:hover {
+    background-color: #e0a800;
+}

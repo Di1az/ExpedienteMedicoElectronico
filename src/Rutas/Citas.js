@@ -10,6 +10,6 @@ router.patch('/citas/:id/estado', ControladorCita.actualizarEstadoCita);
 
 router.get('/citas/:id_doctor', ControladorCita.obtenerCitasDoctor);
 
-router.get('/citas/:id', ControladorCita.obtenerCitaPorId);
+router.get('/citasConsulta/:id_cita', ControladorCita.obtenerCitaPorId);
 
 module.exports = router;

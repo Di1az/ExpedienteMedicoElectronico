@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Consultar Cita</title>
+    <link rel="icon" href="/public/logo.png" />
     <link rel="stylesheet" href="../CSS/atenderCita.css">
 </head>
 <body>
@@ -37,18 +38,12 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="searchAlergias">Alergias</label>
-                    <div class="search-container">
-                        <input type="text" id="searchAlergias" placeholder="Buscar alergias...">
-                    </div>
                     <div class="checkbox-list large-list" id="alergiasLista">
                         <!-- Alergias se agregarán dinámicamente -->
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="searchEnfermedades">Enfermedades</label>
-                    <div class="search-container">
-                        <input type="text" id="searchEnfermedades" placeholder="Buscar enfermedades...">
-                    </div>
                     <div class="checkbox-list large-list" id="enfermedadesLista">
                         <!-- Enfermedades se agregarán dinámicamente -->
                     </div>
@@ -56,6 +51,7 @@
             </div>
 
             <button type="button" id="saveDiagnosisButton">Guardar Diagnóstico</button>
+            <button type="button" class="back-button" onclick="back()">Volver</button>
         </form>
     </div>
     <script src="../JS/atenderCita.js"></script>
