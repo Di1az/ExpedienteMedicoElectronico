@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { Usuario } = require('./Modelos/Usuario');
+const Usuario  = require('./Modelos/Usuario');
 const sequelize = require('./config/database');
 
 const insertarUsuariosCifrados = async () => {
@@ -8,8 +8,18 @@ const insertarUsuariosCifrados = async () => {
      await sequelize.sync();
 
      const usuarios = [
-       { nombre_usuario: 'juanperez', contraseña: '1234', rol: 'doctor' },
-       { nombre_usuario: 'marialopez', contraseña: '1234', rol: 'doctor' },
+       { nombre_usuario: 'juanperez', contraseña: 'juan1234', rol: 'doctor' },
+       { nombre_usuario: 'marialopez', contraseña: 'maria1234', rol: 'doctor' },
+       { nombre_usuario: 'carlosgomez', contraseña: 'carlos1234', rol: 'doctor' },
+       { nombre_usuario: 'anatorres', contraseña: 'ana1234', rol: 'doctor' },
+       { nombre_usuario: 'miguelramirez', contraseña: 'miguel1234', rol: 'doctor' },
+       { nombre_usuario: 'lauramartinez', contraseña: 'laura1234', rol: 'doctor' },
+       { nombre_usuario: 'jorgehernandez', contraseña: 'jorge1234', rol: 'doctor' },
+       { nombre_usuario: 'patriciadiaz', contraseña: 'patricia1234', rol: 'doctor' },
+       { nombre_usuario: 'andrescastillo', contraseña: 'andres1234', rol: 'doctor' },
+       { nombre_usuario: 'rosaflores', contraseña: 'rosa1234', rol: 'doctor' },
+       { nombre_usuario: 'antoniomorales', contraseña: 'antonio1234', rol: 'doctor' },
+       { nombre_usuario: 'beatrizsanchez', contraseña: 'beatriz1234', rol: 'doctor' },
      ];
 
      for (const usuario of usuarios) {

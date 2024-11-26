@@ -1,4 +1,4 @@
-const { Usuario } = require('../Modelos/Usuario');
+const  Usuario  = require('../Modelos/Usuario');
 const Paciente = require('../Modelos/Paciente');
 const Expediente = require('../Modelos/Expediente');
 const Alergia = require('../Modelos/Alergia');
