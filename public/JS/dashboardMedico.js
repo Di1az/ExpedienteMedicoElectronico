@@ -24,9 +24,39 @@ document.addEventListener('DOMContentLoaded', () => {
         let edad = hoy.getFullYear() - nacimiento.getFullYear();
         const mes = hoy.getMonth() - nacimiento.getMonth();
         if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
-            edad--; // Restar un año si no ha cumplido en el mes actual
+            edad--; 
         }
         return edad;
+    };
+
+    const mostrarNombreMedicoLocal = async ()=>{
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            document.getElementById('errorMessage').textContent = 'No se encontró sesión activa.';
+            return;
+        }
+
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const id_usuario = payload.id_usuario;
+
+        try {
+            const response = await fetch('http://localhost:3001/api/datos/doctores');
+            if (!response.ok) throw new Error('No se pudieron cargar los médicos.');
+    
+            const doctores = await response.json();
+            const doctor = doctores.find(d => d.id_doctor === id_usuario);
+
+            if (doctor) {
+                document.getElementById('nombreMedico').textContent = `${doctor.nombre} (${doctor.especialidad})`;
+            } else {
+                document.getElementById('errorMessage').textContent = 'No se encontró un médico asociado a este usuario.';
+            }
+        } catch (error) {
+            console.error('Error al cargar los médicos:', error);
+            document.getElementById('errorMessage').textContent = 'Error al cargar los médicos.';
+        }    
+
     };
 
     // Función para obtener los pacientes
@@ -90,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Función para redirigir al formulario de alta paciente
     const registrarPaciente = () => {
-        window.location.href = "altaPaciente.html";  // Cambiar por la ruta correcta
+        window.location.href = "altaPaciente.html"; 
     };
 
     logoutBtn.addEventListener('click', () => {
@@ -100,15 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     
-    // Funciones para los botones de acción
-    window.agendarCita = (curp) => {
-        window.location.href = `agendarCitas.html?paciente=${curp}`;
-    };
-
-    window.verDetalles = (curp) => {
-        window.location.href = `consultarPacientes.html?paciente=${curp}`;
-    };
-
     // Llamar a la función para cargar los pacientes
     cargarPacientes();
     mostrarNombreMedicoLocal();

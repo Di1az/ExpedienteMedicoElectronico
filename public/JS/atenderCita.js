@@ -43,35 +43,35 @@ async function inicializarFormulario() {
     const alergiasPaciente = expedientePaciente.alergias.split(',').map(a => a.trim());
     const enfermedadesPaciente = expedientePaciente.enfermedades.split(',').map(e => e.trim());
 
-    // Enfermedades
-    const enfermedadesContainer = document.getElementById('enfermedadesLista');
-
-    if (enfermedadesPaciente.length > 0) {
-        enfermedadesContainer.innerHTML = enfermedadesPaciente
-            .map(enfermedad => `
-                <div class="list-item">
-                    <span class="dot dot-yellow"></span>
-                    ${enfermedad}
-                </div>
-            `).join('');
-    } else {
-        enfermedadesContainer.innerHTML = '<p class="empty-message">No se han registrado enfermedades</p>';
-    }
-
-    // Alergias
+    // Renderizar las alergias
     const alergiasContainer = document.getElementById('alergiasLista');
+    alergiasContainer.innerHTML = alergias.map(alergia => `
+        <div class="list-item">
+            <input 
+                type="checkbox" 
+                id="alergia-${alergia.id}" 
+                name="alergias" 
+                value="${alergia.nombre}" 
+                ${alergiasPaciente.includes(alergia.nombre) ? 'checked' : ''}
+            />
+            <label for="alergia-${alergia.id}">${alergia.nombre}</label>
+        </div>
+    `).join('');
 
-    if (alergiasPaciente.length > 0) {
-        alergiasContainer.innerHTML = alergiasPaciente
-            .map(alergia => `
-                <div class="list-item">
-                    <span class="dot dot-red"></span>
-                    ${alergia}
-                </div>
-            `).join('');
-    } else {
-        alergiasContainer.innerHTML = '<p class="empty-message">No se han registrado alergias</p>';
-    }
+    // Renderizar las enfermedades
+    const enfermedadesContainer = document.getElementById('enfermedadesLista');
+    enfermedadesContainer.innerHTML = enfermedades.map(enfermedad => `
+        <div class="list-item">
+            <input 
+                type="checkbox" 
+                id="enfermedad-${enfermedad.id}" 
+                name="enfermedades" 
+                value="${enfermedad.nombre}" 
+                ${enfermedadesPaciente.includes(enfermedad.nombre) ? 'checked' : ''}
+            />
+            <label for="enfermedad-${enfermedad.id}">${enfermedad.nombre}</label>
+        </div>
+    `).join('');
 }
 
 
@@ -161,13 +161,26 @@ async function guardarDiagnostico() {
         return;
     }
 
+    // Obtener alergias y enfermedades seleccionadas
+    const alergiasSeleccionadas = Array.from(document.querySelectorAll('#alergiasLista input[type="checkbox"]:checked'))
+        .map(checkbox => checkbox.value);
+
+    const enfermedadesSeleccionadas = Array.from(document.querySelectorAll('#enfermedadesLista input[type="checkbox"]:checked'))
+        .map(checkbox => checkbox.value);
+
     try {
+        // Enviar diagnóstico y lista de alergias y enfermedades
         const response = await fetch(`http://localhost:3001/api/citas/${idCita}/diagnostico`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ diagnostico, estado: 'Finalizada' })
+            body: JSON.stringify({
+                diagnostico,
+                estado: 'Finalizada',
+                alergias: alergiasSeleccionadas,
+                enfermedades: enfermedadesSeleccionadas
+            })
         });
 
         if (!response.ok) {
@@ -175,7 +188,7 @@ async function guardarDiagnostico() {
             throw new Error(error.message || 'Error al guardar el diagnóstico');
         }
 
-        alert('Diagnóstico guardado y cita finalizada exitosamente.');
+        alert('Diagnóstico guardado, y expediente actualizado exitosamente.');
         back();
     } catch (error) {
         console.error('Error al guardar el diagnóstico:', error);

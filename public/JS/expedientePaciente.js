@@ -1,11 +1,9 @@
 // Funciones auxiliares
-function formatearFecha(fecha) {
-    return new Date(fecha).toLocaleDateString('es-MX', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
-    });
+function formatearFechaUTC(fecha) {
+    const opciones = { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'UTC' };
+    return new Date(fecha).toLocaleDateString('es-MX', opciones);
 }
+
 
 function calcularEdad(fecha_nacimiento) {
     const hoy = new Date();
@@ -80,12 +78,12 @@ async function inicializarExpediente() {
 
     // Información personal
     document.getElementById('birthDate').textContent = 
-        formatearFecha(paciente.fechaNacimiento);
+        formatearFechaUTC(paciente.fechaNacimiento);
     document.getElementById('gender').textContent = 
         paciente.sexo === 'hombre' ? 'Masculino' : 'Femenino';
     document.getElementById('curp').textContent = paciente.curp;
     document.getElementById('lastUpdate').textContent = 
-        formatearFecha(new Date());
+        formatearFechaUTC(new Date());
 
     // Alergias
     const alergiasContainer = document.getElementById('alergiasList');

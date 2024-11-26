@@ -1,4 +1,5 @@
 const citas = require('../Modelos/Cita');
+const Expediente = require('../Modelos/Expediente');
 
 const registrarCita = async (req, res) => {
     try {
@@ -116,20 +117,35 @@ const obtenerCitaPorId = async (req, res) => {
 
 const actualizarDiagnostico = async (req, res) => {
     const { id } = req.params;
-    const { diagnostico, estado } = req.body;
+    const { diagnostico, estado, alergias, enfermedades } = req.body;
 
     try {
+        // Buscar la cita por ID
         const cita = await citas.findByPk(id);
-        if (!cita) return res.status(404).json({ message: 'Cita no encontrada' });
+        if (!cita) {
+            return res.status(404).json({ message: 'Cita no encontrada' });
+        }
 
+        // Actualizar el diagnóstico y el estado de la cita
         cita.diagnostico = diagnostico;
-        if (estado) cita.estado = estado;
+        cita.estado = estado;
         await cita.save();
 
-        res.json({ message: 'Cita actualizada exitosamente', cita });
+        // Obtener el paciente asociado a la cita
+        const expediente = await Expediente.findByPk(cita.id_paciente);
+        if (!expediente) {
+            return res.status(404).json({ message: 'Expediente no encontrado' });
+        }
+
+        // Actualizar alergias y enfermedades del paciente
+        expediente.listaAlergias = alergias.join(','); // Asegúrate de que el modelo permita esta propiedad
+        expediente.listaEnfermedades = enfermedades.join(',');
+        await expediente.save();
+
+        res.status(200).json({ message: 'Diagnóstico y expediente actualizados correctamente' });
     } catch (error) {
-        console.error('Error al actualizar la cita:', error);
-        res.status(500).json({ message: 'Error al actualizar la cita' });
+        console.error('Error al actualizar diagnóstico:', error);
+        res.status(500).json({ message: 'Error al guardar el diagnóstico' });
     }
 };
 
