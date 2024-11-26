@@ -147,4 +147,8 @@ filterButtons.forEach(button => {
 });
 
 
+function back(){
+    window.location.href = "dashboardMedico.html";
+}
+
 inicializarCitas();

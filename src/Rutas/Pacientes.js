@@ -5,13 +5,10 @@ const { verificarToken } = require('../Middlewares/autenticacionJWT');
 const Expediente = require('../Modelos/Expediente');
 const router = express.Router();
 
-// Ruta para obtener todos los pacientes
 router.get('/', verificarToken, ControladorPaciente.obtenerPacientes); 
 
-// Ruta para crear un nuevo paciente
 router.post('/registrar', ControladorPaciente.registrarPaciente);
 
-// Ruta para obtener el expediente médico de un paciente por su ID
 router.get('/expediente/:id', async (req, res) => {
     try {
         const pacienteId = req.params.id;
@@ -46,7 +43,6 @@ router.get('/expediente/:id', async (req, res) => {
     }
 });
 
-//Ruta para obtener al paciente que corresponde al usuario que ingreso
 router.get('/paciente-usuario/:id_usuario', async (req, res) => {
     try {
         const id_usuario = req.params.id_usuario;
