@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database'); // Importa tu conexión a la base de datos
+const sequelize = require('../config/database');
 
 const Usuario = sequelize.define('Usuario', {
   id_usuario: {
@@ -13,7 +13,7 @@ const Usuario = sequelize.define('Usuario', {
     unique: true,
   },
   contraseña: {
-    type: DataTypes.STRING(255), // Asegúrate de guardar contraseñas hasheadas
+    type: DataTypes.STRING(255),
     allowNull: false,
   },
   rol: {
@@ -25,4 +25,4 @@ const Usuario = sequelize.define('Usuario', {
   timestamps: false,
 });
 
-module.exports = Usuario;
+module.exports = { Usuario }; 

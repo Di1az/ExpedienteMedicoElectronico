@@ -38,7 +38,9 @@ document.getElementById('appointmentForm').addEventListener('submit', async (eve
 
         if (response.ok) {
             alert('Cita agendada exitosamente');
-            document.getElementById('appointmentForm').reset();
+            window.location.href = "dashboardPaciente.html";
+
+         //   document.getElementById('appointmentForm').reset();
         } else {
             const errorData = await response.json();
             document.getElementById('errorMessage').textContent = errorData.mensaje || 'Error desconocido al agendar la cita.';

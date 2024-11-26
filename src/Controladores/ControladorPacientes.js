@@ -1,10 +1,11 @@
-const Usuario = require('../Modelos/Usuario');
+const { Usuario } = require('../Modelos/Usuario');
 const Paciente = require('../Modelos/Paciente');
 const Expediente = require('../Modelos/Expediente');
 const Alergia = require('../Modelos/Alergia');
 const Enfermedad = require('../Modelos/Enfermedad');
 const PacienteAlergia = require('../Modelos/PacienteAlergia');
 const PacienteEnfermedad = require('../Modelos/PacienteEnfermedad');
+const bcrypt = require('bcrypt');
 
 const obtenerPacientes = async (req, res) => {
   try {
@@ -35,9 +36,12 @@ const registrarPaciente = async (req, res) => {
   const transaction = await Usuario.sequelize.transaction();
 
   try {
+      // Cifrar la contraseña
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       const nuevoUsuario = await Usuario.create({
           nombre_usuario: usuario,
-          contraseña: password, 
+          contraseña: hashedPassword, // Usar contraseña hasheada
           rol: 'paciente'
       }, { transaction });
 
@@ -61,7 +65,6 @@ const registrarPaciente = async (req, res) => {
      
       if (alergias && alergias.length > 0) {
         for (const alergiaNombre of alergias) {
-            
             const alergia = await Alergia.findOne({
                 where: { nombre: alergiaNombre } 
             });
@@ -106,5 +109,6 @@ const registrarPaciente = async (req, res) => {
 };
 
 module.exports = {
-  obtenerPacientes, registrarPaciente
+  obtenerPacientes, 
+  registrarPaciente
 };

@@ -144,6 +144,7 @@ document.getElementById('expedienteForm').addEventListener('submit', async (e) =
       const data = await response.json();
       if (response.ok) {
           alert('Paciente registrado exitosamente');
+          window.location.href = "dashboardMedico.html";
       } else {
           alert('Error: ' + data.error);
       }
