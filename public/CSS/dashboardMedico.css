@@ -24,7 +24,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #4CAF50;
+  background-color: #2b2e53;
   padding: 20px;
   border-radius: 8px;
   color: white;
@@ -35,7 +35,7 @@ body {
 }
 
 .welcome button {
-  background-color: #e74c3c;
+  background-color: #ca0e0e;
   color: white;
   border: none;
   padding: 10px 20px;

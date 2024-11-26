@@ -26,7 +26,6 @@ function createAppointmentCard(appointment) {
             <div class="card-actions">
                 ${appointment.estado === 'Pendiente' ? `
                     <button class="btn btn-finish" onclick="viewAppointment(${appointment.id_cita})">Consultar</button>
-                    <button class="btn btn-cancel" onclick="cancelAppointment(${appointment.id_cita})">Cancelar</button>
                 ` : ''} 
             </div>
         </div>

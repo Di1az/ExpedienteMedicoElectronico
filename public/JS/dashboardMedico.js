@@ -70,13 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                 </div>
-                <div class="actions">
-                    <button class="btn btn-secondary" onclick="agendarCita('${paciente.curp}')">
-                        Agendar Cita
-                    </button>
-                    <button class="btn btn-primary" onclick="verDetalles('${paciente.curp}')">
-                        Ver Detalles
-                    </button>
                 </div>
             `;
             listaPacientes.appendChild(li);
